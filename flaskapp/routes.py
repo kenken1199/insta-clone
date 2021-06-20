@@ -1,6 +1,6 @@
 from flaskapp import app, db
 from flask import render_template, redirect, url_for, flash, request, jsonify
-from flaskapp.forms import RegistrationForm, LoginForm, PostForm, AccountUpdateForm, CommentPostForm
+from flaskapp.forms import RegistrationForm, LoginForm, PostForm, AccountUpdateForm, CommentPostForm, EmptyForm
 from flaskapp.models import User, Post, Comment, Notif
 from flask_login import login_user, current_user, logout_user, login_required
 from flaskapp.utils import save_picture, save_media, get_file_url, delete_file
@@ -128,7 +128,8 @@ def get_user(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts
     posts.reverse()
-    return render_template("user.html", title=user.username, posts=posts, user=user, get_file_url=get_file_url)
+    form = EmptyForm()
+    return render_template("user.html", title=user.username, posts=posts, user=user, get_file_url=get_file_url, form=form)
 
 
 
@@ -180,38 +181,35 @@ def account():
 
 
 
-@app.route("/follow", methods=['GET', 'POST'])
+@app.route("/follow/<username>", methods=['POST'])
 @login_required
-def follow_user():
+def follow_user(username):
+    form = EmptyForm()
     # user_id = int(request.args.get('id'))
-    if request.method == 'GET':
-        username = request.args.get('username')
-    else:
-        username = request.form['username']
-    print(username)
-    user = User.query.filter_by(username=username).first()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
     current_user.follow(user)
     db.session.commit()
-    # flash(f"You are now following {username}", 'success')
+    flash(f"You are now following {username}", 'success')
 
-    return jsonify(result=username + " followed")
-    # return redirect(url_for('get_user', username=user.username))
+    # return jsonify(result=username + " followed")
+    return redirect(url_for('get_user', username=user.username))
 
 
 
-@app.route("/unfollow", methods=['POST'])
+@app.route("/unfollow/<username>", methods=['POST'])
 @login_required
-def unfollow_user():
+def unfollow_user(username):
+    form = EmptyForm()
     # user_id = int(request.args.get('id'))
-    username = request.form['username']
-    user = User.query.filter_by(username=username).first()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
     current_user.unfollow(user)
     db.session.commit()
-    print(username)
-    # flash(f"{username} unfollowed", 'success')
+    flash(f"{username} unfollowed", 'success')
 
-    return jsonify(result=username + " unfollowed")
-    # return redirect(url_for('get_user', username=user.username))
+    # return jsonify(result=username + " unfollowed")
+    return redirect(url_for('get_user', username=user.username))
 
 
 @app.route("/post/<int:post_id>/like", methods=['GET', 'POST'])

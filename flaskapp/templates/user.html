@@ -15,14 +15,24 @@
                         <li class="user-info list-group-item border-0 bg-light">{{ user.follows.count() }} <span class="text-dark font-weight-normal" href="">Following</span></li>
                     </ul>
                 </div>
-                
+
                 {% if current_user.is_authenticated %}
                     <div class="">
                         <small class="">
                                 {% if current_user.is_following(user) %}
-                                    <button class="btn btn-secondary" id="flw">Following</button>
+                            <p>
+                                <form action="{{ url_for('unfollow_user', username=user.username) }}" method="post">
+                                    {{ form.hidden_tag() }}
+                                    {{ form.submit(value=('Unfollow'), class="btn btn-danger") }}
+                                </form>
+                            </p>
                                 {% elif user != current_user %}
-                                    <button class="btn btn-primary" id="flw">Follow</button>
+                            <p>
+                                <form action="{{ url_for('follow_user', username=user.username) }}" method="post">
+                                    {{ form.hidden_tag() }}
+                                    {{ form.submit(value=('Follow'), class="btn btn-primary") }}
+                                </form>
+                            </p>
                                 {% endif %}
                         </small>
                     </div>

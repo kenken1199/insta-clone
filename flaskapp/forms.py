@@ -1,3 +1,4 @@
+from flask.app import Flask
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
@@ -68,3 +69,7 @@ class AccountUpdateForm(FlaskForm):
             user = User.query.filter_by(username=username.data).first()
             if user:
                 raise ValidationError("Username is already take.")
+
+
+class EmptyForm(FlaskForm):
+    submit= SubmitField('Submit')
