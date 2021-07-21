@@ -1,4 +1,4 @@
 __pycache__/
 .vscode/
 .DS_Store
-test.db
+flaskapp/test.db
