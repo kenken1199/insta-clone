@@ -2,3 +2,5 @@ __pycache__/
 .vscode/
 .DS_Store
 flaskapp/test.db
+flaskapp/static/media
+flaskapp/static/profile_pics
